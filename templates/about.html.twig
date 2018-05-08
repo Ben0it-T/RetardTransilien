@@ -1,0 +1,68 @@
+{% extends "layout.html.twig" %}
+{% set active_page = "about" %}
+
+{% block title %}Retard Ligne {{ routeShortName }} - A propos{% endblock %}
+
+{% block description %}{% endblock %}
+
+{% block navbarbrand %}Retard Ligne {{ routeShortName }}{% endblock %}
+
+{% block content %}
+ <div class="page-header">
+    <h1>A propos</h1>
+</div>
+
+<div class="container-fluid">
+    <table>
+        <tbody>
+            <tr>
+                <td class="about-label" >Réseau</td>
+                <td>{{ agency.name}} ({{ agency.id }})</td>
+            </tr>
+            <tr>
+                <td class="about-label" >Ligne</td>
+                <td>{{ routeShortName }}</td>
+            </tr>
+            <tr>
+                <td class="about-label" >Version&nbsp;</td>
+                <td>4.0.2 (01/05/2018)</td>
+            </tr>
+            <tr>
+                <td class="about-label" >Base</td>
+                <td>{{ dbDate|date("d/m/Y") }}</td>
+            </tr>
+            
+            
+        </tbody>
+    </table>
+    <p>&nbsp;</p>
+    <p><em>Aucune information personnelle n'est enregistr&eacute;e.</em></p>
+</div>
+
+
+<div class="page-header">
+    <h3>Comment &ccedil;a marche ?</h3>
+</div>
+<div class="container-fluid">
+    <p>L'application utilise plusieurs sources de donn&eacute;es :</p>
+    <ul>
+        <li>les horaires th&eacute;oriques des lignes Transilien (GTFS)</li>
+        <li>l'API Transilien temps r&eacute;el</li>
+        <li>les d&eacute;clarations des utilisateurs </li>
+    </ul>
+    <p>Les déclarations enregistr&eacute;s sont attach&eacute;s à une mission. Ainsi, les retards subis par les voyageurs empruntants le m&ecirc;me train ne se cumulent pas : ils renforcent la robustesse des donn&eacute;es.</p>
+</div>
+
+<div class="page-header">
+    <h3>Sources de donn&eacute;es</h3>
+</div>
+<div class="container-fluid">
+    <p><a href="https://data.sncf.com/" data-ajax="false" target="_blank" >SNCF Open Data</a></p>
+    <p><a href="https://ressources.data.sncf.com/explore/dataset/api-temps-reel-transilien/?tab=metas" data-ajax="false" target="_blank" >API temps r&eacute;&eacute;l Transilien</a></p>
+    <p><a href="http://ressources.data.sncf.com/explore/dataset/sncf-transilien-gtfs/?tab=metas" data-ajax="false" target="_blank" >Horaires th&eacute;oriques des lignes Transilien au format GTFS</a></p>
+    <p><a href="http://files.transilien.com/horaires/gtfs/" data-ajax="false" target="_blank" >Donn&eacute;es brutes au format GTFS</a></p>
+    <p><a href="https://developers.google.com/transit/gtfs/reference" data-ajax="false" target="_blank" >General Transit Feed Specification Reference</a></p>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,282 @@
+{% extends "layout.html.twig" %}
+{% set active_page = "declareIncident" %}
+
+{% block title %}Retard Ligne {{ routeShortName }} - Déclarer un retard sur la ligne J du Transilien{% endblock %}
+
+{% block description %}{% endblock %}
+
+{% block headerscript %}
+<script src="{{ asset('/js/common.js') }}"></script>
+<script src="{{ asset('/js/geoloc.js') }}"></script>
+<script src="{{ asset('/js/trips.js') }}"></script>
+{% endblock %}
+
+{% block navbarbrand %}Retard Ligne {{ routeShortName }}{% endblock %}
+
+{% block content %}
+
+<!-- flashBagMessage -->
+{% for flashMessage in app.session.flashbag.get('success') %}
+    <div id="alertSuccess" class="alert alert-success alert-dismissable fade in" role="alert" >
+        <span class="glyphicon glyphicon-thumbs-up"></span> {{ flashMessage }}
+    </div>
+{% endfor %}
+
+{% for flashMessage in app.session.flashbag.get('error') %}
+    <div id="alertError" class="alert alert-danger alert-dismissable fade in" role="alert" >
+        <span class="glyphicon glyphicon-warning-sign"></span> {{ flashMessage }}
+    </div>
+{% endfor %}
+
+
+<!-- Trajet -->
+<div class="page-header">
+    <h1>Trajet</h1>
+</div>
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <div class="col-sm-2">
+            <label for="StopPoint1">
+                <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> D&eacute;part</label>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="input-group">
+                <select id="StopPoint1" class="form-control" >
+                    <option value="" selected >S&eacute;lectionner une gare</option>
+                    {% for stop in stops %}
+                    <option value="{{ stop.id }}" >{{ stop.name }}</option>
+                    {% endfor %}
+                </select>
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" id="btnStopPoint1" ><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span></button>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2">
+            <label for="StopPoint2">
+                <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Destination</label>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="input-group">
+                <select id="StopPoint2" class="form-control" >
+                    <option value="" selected >S&eacute;lectionner une gare</option>
+                    {% for stop in stops %}
+                    <option value="{{ stop.id }}" >{{ stop.name }}</option>
+                    {% endfor %}
+                </select>
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" id="btnStopPoint2" ><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span></button>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2">
+            <label for="time">
+                <span class="glyphicon glyphicon-time" aria-hidden="true"></span> Heure</label>
+        </div>
+
+        <div class="col-sm-6">
+            <select id="time" name="time" class="form-control" >
+                {% for time in times %}
+                <option value="{{ time }}" {% if time == now %} selected="selected" {% endif %}>{{ time }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+
+
+<!-- Trains -->
+<div class="page-header">
+    <h1>Trains</h1>
+</div>
+
+<div id="TripsList">
+    <div class="alert alert-info" role="alert">
+        <span class="glyphicon glyphicon-info-sign"></span> S&eacute;lectionner une gare de d&eacute;part et une gare d'arriv&eacute;e.
+    </div>
+</div>
+
+
+<!-- Événement -->
+<div class="page-header">
+    <h1>Événements</h1>
+</div>
+
+<!-- Today -->
+{% if nbIncidentsToday > 0 %}
+<div class="alert alert-info">
+    <h4>Aujourd'hui sur la ligne {{ routeShortName }}</h4>
+    <div>
+        <span class="glyphicon glyphicon-tag"></span> {% if nbIncidentsToday == 0 %}<b>Aucun</b> événement{% elseif nbIncidentsToday == 1 %}<b>1</b> événement{% else %}<b>{{nbIncidentsToday}}</b> événements{% endif %}
+    </div>
+    {% if median.50 is defined %}
+    <div>
+        <span class="glyphicon glyphicon-hourglass"></span> Retard médian : <b>{{median.50}}mn </b> [{{median.25}} - {{median.75}}]
+    </div>
+    {% endif %}
+    <div>
+        <span class="glyphicon glyphicon-time"></span> Retard cumulé : <b>{{ todayDelaySum }}</b>
+    </div>
+</div>
+{% endif %}
+
+
+<!-- Ongoing -->
+{% if ongoingTripStatus is defined %}
+<div class="alert alert-info">
+    <h4>Actuellement sur la ligne {{ routeShortName }}</h4>
+    <em>Api Temps réél {{ ongoingTripStatus.date }}</em>
+    <div>
+        <span class="glyphicon glyphicon-tag"></span> Retardé : <b>{{ ongoingTripStatus.delayed }}</b>
+    </div>
+    <div>
+        <span class="glyphicon glyphicon-tag"></span> Supprimé : <b>{{ ongoingTripStatus.cancelled }}</b>
+    </div>
+
+    {% if ongoingTripStatus.median.50 is defined %}
+    {% if ongoingTripStatus.median.50 != '' %}
+    <div>
+        <span class="glyphicon glyphicon-hourglass"></span> Retard médian : <b>{{ongoingTripStatus.median.50}}mn </b> [{{ongoingTripStatus.median.25}} - {{ongoingTripStatus.median.75}}]
+    </div>
+    {% endif %}
+    {% endif %}
+
+    {% if ongoingTripStatus.delay > 0 %}
+    <div>
+        <span class="glyphicon glyphicon-time"></span> Retard cumulé : <b>{{ ongoingTripStatus.delay }}mn</b>
+    </div>
+    {% endif %}
+
+</div>
+{% endif %}
+
+ 
+<!-- FORM -->
+<div class="modal fade" id="incidentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Déclarer un événement</h4>
+            </div>
+            <div class="modal-body">
+
+
+{{ form_start(incidentForm, { 'attr': {'class': 'form-horizontal'} }) }}
+<div class="form-group" >
+    <div class="col-sm-3" >
+        <label>
+        <span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
+        Train
+        </label>
+    </div>
+    <div class="col-sm-9">
+        <div id="tripInfos" ></div>
+    </div>
+</div>
+
+<div class="form-group" >
+    <div class="col-sm-3">
+        <label for="form_type_delay">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            Incident
+        </label>
+    </div>
+    <div class="col-sm-9">
+        {{ form_widget(incidentForm.incidentType, { 'attr':  {
+            'class': 'form-control'
+        }}) }}
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-sm-3">
+        <label for="form_delay">
+            <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+            Retard
+        </label>
+    </div>
+    <div class="col-sm-9">
+        {{ form_widget(incidentForm.delay, { 'attr':  {
+            'class': 'form-control'
+        }}) }}
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-sm-12 text-right" style="padding-top: 40px;">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Annuler
+        </button>
+        <button type="submit" class="btn btn-primary">
+            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Déclarer
+        </button>
+    </div>
+</div>
+
+{{ form_end(incidentForm) }}
+
+
+            </div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+<!-- End Modal -->
+
+
+{% endblock %}
+
+{% block footerscripts %}
+<script type="text/javascript" >
+    function checkType() {
+        $("#{{ incidentForm.delay.vars.id }}").val("");
+        if( $("#{{ incidentForm.incidentType.vars.id }}").val() == "3" ) {
+            $("#{{ incidentForm.delay.vars.id }}").val("0");
+        }
+    }
+
+    $( document ).ready(function() {
+        getTrips();
+        getOngoing();
+        window.setTimeout(function() {
+            $("#alertSuccess").fadeTo(1000, 0.5).slideUp(500);
+        }, 5000);
+        window.setTimeout(function() {
+            $("#alertError").fadeTo(1000, 0.5).slideUp(500);
+        }, 5000);
+    });
+
+    $("#btnStopPoint1").click(function() {
+        getLocation("StopPoint1");
+    });
+    $("#btnStopPoint2").click(function() {
+        getLocation("StopPoint2");
+    });
+
+
+    $("#StopPoint1").change(function() {
+        getTrips();
+    });
+    $("#StopPoint2").change(function() {
+        getTrips();
+    });
+    $("#time").change(function() {
+        getTrips();
+    });
+    $("#{{ incidentForm.incidentType.vars.id }}").change(function() {
+        checkType();
+    });
+
+</script>
+{% endblock %}
+

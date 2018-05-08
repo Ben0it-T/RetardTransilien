@@ -1,0 +1,260 @@
+{% extends "layout.html.twig" %}
+{% set active_page = "consultData" %}
+
+{% block title %}Retard Ligne {{ routeShortName }} - Consulter les données{% endblock %}
+
+{% block description %}{% endblock %}
+
+{% block headerscript %}
+<script src="{{ asset('/lib/chart/Chart.min.js') }}"></script>
+<link href="{{ asset('/lib/bootstrap-datepicker/css/bootstrap-datepicker3.css') }}" rel="stylesheet">
+{% endblock %}
+
+
+{% block navbarbrand %}Retard Ligne {{ routeShortName }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Données collectées</h1>
+</div>
+{{ form_start(formView, { 'attr': {'id': 'datepickerForm', 'class': 'form-horizontal'} }) }}
+<div class="form-group" >
+    <div class="col-sm-2" >
+        <label><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> Période</label>
+    </div>
+
+    <div class="col-sm-6" id="datepicker-container" >
+        <div class="input-daterange input-group" id="datepicker">
+            {{ form_widget(formView.dateStart, { 'attr':  {
+                'class': 'input-sm form-control',
+                'style': 'background-color : #ffffff'
+            }}) }}
+            <span class="input-group-addon">au</span>
+            {{ form_widget(formView.dateEnd, { 'attr':  {
+                'class': 'input-sm form-control',
+                'style': 'background-color : #ffffff'
+            }}) }}
+        </div>
+    </div>
+</div>
+{{ form_end(formView) }}
+
+<div class="page-header">
+    <h2>Nombre d'événements</h2>
+</div>
+<div class="table-responsive">
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Nombre</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>A l'heure</td>
+                <td>{{ nbIncidents.3 }}</td>
+            </tr>
+            <tr>
+                <td>Retard</td>
+                <td>{{ nbIncidents.1 }}</td>
+            </tr>
+            <tr>
+                <td>Modif. desserte</td>
+                <td>{{ nbIncidents.4 }}</td>
+            </tr>
+            <tr>
+                <td>Suppression</td>
+                <td>{{ nbIncidents.2 }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Total</th>
+               <td>{{ nbIncidents.0 }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="chart-container">
+    <canvas id="chart"></canvas>
+</div>
+
+
+<div class="page-header">
+    <h2>Retard médian</h2>
+</div>
+<div class="table-responsive">
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Retard</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Retard</td>
+                {% if medians.global.50 is defined and  medians.delayed.50 != '' %}
+                <td>{{medians.delayed.50}}mn [{{medians.delayed.25}} - {{medians.delayed.75}}]</td>
+                {% else %}
+                <td>-</td>
+                {% endif %}
+            </tr>
+
+            <tr>
+                <td>Modif. desserte</td>
+                {% if medians.modified.50 is defined and medians.modified.50 != '' %}
+                <td>{{medians.modified.50}}mn [{{medians.modified.25}} - {{medians.modified.75}}]</td>
+                {% else %}
+                <td>-</td>
+                {% endif %}
+            </tr>
+
+            <tr>
+                <td>Suppression</td>
+                {% if medians.deleted.50 is defined and medians.deleted.50 != '' %}
+                <td>{{medians.deleted.50}}mn [{{medians.deleted.25}} - {{medians.deleted.75}}]</td>
+                {% else %}
+                <td>-</td>
+                {% endif %}
+            </tr>
+            
+            <tr>
+                <th scope="row">Global</th>
+                {% if medians.global.50 is defined and medians.global.50 != '' %}
+                <td><b>{{medians.global.50}}mn</b> [{{medians.global.25}} - {{medians.global.75}}]</td>
+                {% else %}
+                <td>-</td>
+                {% endif %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<div class="page-header">
+    <h2>Retard cumulé</h2>
+</div>
+<div class="table-responsive">
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Retard</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Retard</td>
+                {% if delays.1 != 0 %}
+                <td>{{(delays.1)|number_format(0, '.', ' ')}}mn</td>
+                <td>{{delaysDHMS.1}}</td>
+                {% else %}
+                <td>-</td>
+                <td>-</td>
+                {% endif %}
+            </tr>
+
+            <tr>
+                <td>Modif. desserte</td>
+                {% if delays.4 != 0 %}
+                <td>{{(delays.4)|number_format(0, '.', ' ')}}mn</td>
+                <td>{{delaysDHMS.4}}</td>
+                {% else %}
+                <td>-</td>
+                <td>-</td>
+                {% endif %}
+            </tr>
+
+            <tr>
+                <td>Suppression</td>
+                {% if delays.2 != 0 %}
+                <td>{{(delays.2)|number_format(0, '.', ' ')}}mn</td>
+                <td>{{delaysDHMS.2}}</td>
+                {% else %}
+                <td>-</td>
+                <td>-</td>
+                {% endif %}
+            </tr>
+            
+            <tr>
+                <th scope="row">Total</th>
+                {% if delays.0 != '' %}
+                <td><b>{{(delays.0)|number_format(0, '.', ' ')}}mn</b></td>
+                <td><b>{{delaysDHMS.0}}</b></td>
+                {% else %}
+                <td>-</td>
+                <td>-</td>
+                {% endif %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
+
+{% block footerscripts %}
+<script src="{{ asset('/lib/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+<script src="{{ asset('/lib/bootstrap-datepicker/locales/bootstrap-datepicker.fr.min.js') }}"></script>
+
+<script>
+jQuery(document).ready(function() {
+    $('#datepicker-container .input-daterange').datepicker({
+    format: "dd/mm/yyyy",
+    weekStart: 1,
+    maxViewMode: 0,
+    language: "fr",
+    forceParse: false,
+    autoclose: true
+    });
+    
+    $("#{{ formView.dateStart.vars.id }}").change(function() {
+        document.getElementById('datepickerForm').submit();
+    });
+    
+    $("#{{ formView.dateEnd.vars.id }}").change(function() {
+        document.getElementById('datepickerForm').submit();
+    });
+
+    // charts
+    Chart.Line('chart', {
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                yAxes: [{
+                    stacked: true,
+                    gridLines: {
+                        display: true,
+                    },
+                }],
+                xAxes: [{
+                    gridLines: {
+                        display: false
+                    }
+                }]
+            },
+            legend: {
+                display: false,
+            },
+            title: {
+                display: true,
+                text: 'Fréquence des retards'
+            }
+        },
+        data: {
+            labels: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
+            datasets: [{
+                label: '# de retards',
+                data: {{ chartData|json_encode() }},
+                fill: true,
+                backgroundColor: "rgba(51,122,183,0.2)",
+                borderColor: "rgba(51,122,183,0.2)",
+            }]
+        }
+    });
+});
+
+
+</script>
+{% endblock %}

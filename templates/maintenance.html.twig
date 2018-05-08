@@ -1,0 +1,19 @@
+{% extends "layout.html.twig" %}
+{% set active_page = "home" %}
+
+{% block title %}Retard Ligne {{ routeShortName }}{% endblock %}
+
+{% block description %}{% endblock %}
+
+{% block navbarbrand %}Retard Ligne {{ routeShortName }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-6 col-sm-offset-3 text-center" style="padding-top:100px;">
+            <p>Mise à jour en cours.<br>L'application est momentanément indisponible.</p>
+        <img src="{{ asset('/img/neryl-100.png') }}" class="img-responsive center-block" style="padding-top:30px;padding-bottom: 50px;" >
+        </div>
+    </div>
+</div>
+{% endblock %}

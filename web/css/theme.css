@@ -1,0 +1,47 @@
+body {
+  padding-top: 70px;
+  padding-bottom: 30px;
+}
+
+/* Badge Bg color */
+.my-badge-warning {
+  background-color: #f0ad4e;
+}
+
+.my-badge-danger {
+  background-color: #d9534f;
+}
+
+.my-color-warning {
+  color: #f0ad4e;
+}
+
+.my-color-danger {
+  color: #d9534f;
+}
+
+.table > tbody > tr > td {
+  vertical-align: middle;
+}
+
+.footer {
+  padding-top: 10px;
+  text-align: center;
+}
+
+.about-label {
+  text-align:left;
+  color:grey;
+  font-weight:bold;
+  padding-right: 10px;
+}
+
+.about-value {
+  text-align:left;
+}
+
+
+#errorPanel {
+  padding-top: 30px;
+  padding-bottom: 10px;
+}

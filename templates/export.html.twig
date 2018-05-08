@@ -1,0 +1,39 @@
+{% extends "layout.html.twig" %}
+{% set active_page = "exportData" %}
+
+{% block title %}Retard Ligne {{ routeShortName }} - Exporter les données collectées{% endblock %}
+
+{% block description %}{% endblock %}
+
+{% block navbarbrand %}Retard Ligne {{ routeShortName }}{% endblock %}
+
+{% block content %}
+ <div class="page-header">
+    <h1>Exporter les données</h1>
+</div>
+
+<div class="container-fluid">
+    <p>Télécharger les données au format csv.</p>
+    <p>Entête des colonnes : </p>
+    <ul>
+        <li>tripId : identifiant unique du parcours</li>
+        <li>missionId : identifiant de la mission</li>
+        <li>tripDate : date du trajet</li>
+        <li>serviceId : identifiant unique de la course (service)</li>
+        <li>tripHeadsign : code mission du parcours</li>
+        <li>routeId : identifiant de la ligne.</li>
+        <li>departureTime : heure de départ (théorique)</li>
+        <li>arrivalTime : heure d'arrivée (théorique)</li>
+        <li>type : type d'incident</li>
+        <li>delay : retards déclarés</li>
+        <li>median : retard médian</li>
+    </ul>
+</div>
+
+<div class="container-fluid" style="padding-top:50px;">
+    <a href="{{ app.url_generator.generate('exportDataCsv') }}" class="btn btn-default" role="button">
+      <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Télécharger
+    </a>
+</div>
+
+{% endblock %}
