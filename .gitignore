@@ -1,0 +1,16 @@
+# General
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Parameters
+/app/config/dev.php
+/app/config/prod.php
+
+# gtfs files
+/gtfs/*.txt
+/gtfs/*.zip
+
+# vendor
+/vendor/
+
