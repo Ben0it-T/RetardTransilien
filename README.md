@@ -1,3 +1,5 @@
+# RetardTransilien n'est plus maintenu.
+
 # Présentation
 
 RetardTransilien est une application web permettant de visualiser les retards et suppressions en temps réel sur le réseau Transilien, et, d'enregistrer et de partager les incidents subis lors de vos trajets quotidiens.
